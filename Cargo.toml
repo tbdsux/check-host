@@ -9,15 +9,15 @@ license = "MIT"
 
 [workspace]
 members = [
-    "crates/*",
+    "crates/checkhost",
 ]
 
 [[bin]]
 bench = false 
-path = "crates/cli/src/main.rs"
+path = "crates/cli/main.rs"
 name = "ch"
 
 [dependencies]
 checkhost = { version = "0.1.0", path = "crates/checkhost" }
-clap = "4.2.0"
+clap = { version = "4.2.0", features = ["derive"] }
 tabled = "0.10.0"
