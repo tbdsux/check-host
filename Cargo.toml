@@ -1,0 +1,23 @@
+[package]
+name = "check-host"
+version = "0.1.0"
+authors = ["Joshue Abance (tbdsux) <euhsojlogro112002@gmail.com>"]
+description = "A CLI and API Wrapper for https://check-host.net"
+edition = "2021"
+license = "MIT"
+
+
+[workspace]
+members = [
+    "crates/*",
+]
+
+[[bin]]
+bench = false 
+path = "crates/cli/src/main.rs"
+name = "ch"
+
+[dependencies]
+checkhost = { version = "0.1.0", path = "crates/checkhost" }
+clap = "4.2.0"
+tabled = "0.10.0"
