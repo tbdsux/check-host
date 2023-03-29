@@ -2,6 +2,8 @@
 
 check-host.net api wrapper as a library.
 
+(Functions documentation not yet set)
+
 ## Usage
 
 ```rs

@@ -91,6 +91,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "ch"
+version = "0.1.0"
+dependencies = [
+ "checkhost",
+ "clap",
+ "tabled",
+]
+
+[[package]]
 name = "check-host"
 version = "0.1.0"
 dependencies = [
@@ -150,15 +159,6 @@ name = "clap_lex"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4f0807fb6f644c83f3e4ec014fec9858c1c8b26a7db8eb5f0bde5817df9c1df7"
-
-[[package]]
-name = "cli"
-version = "0.1.0"
-dependencies = [
- "checkhost",
- "clap",
- "tabled",
-]
 
 [[package]]
 name = "concolor-override"
