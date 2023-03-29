@@ -5,7 +5,7 @@ use url::Url;
 
 static API_URL: &str = "https://check-host.net";
 
-pub fn api_request<T>(uri: &str, _type: &str) -> Result<T, reqwest::Error>
+pub fn api_request<T>(uri: &str) -> Result<T, reqwest::Error>
 where
     T: DeserializeOwned,
 {
@@ -20,9 +20,9 @@ where
     Ok(data)
 }
 
-pub fn check_url_builder(host: &str, nodes: u8) -> Url {
+pub fn check_url_builder(host: &str, nodes: u8, check_type: &str) -> Url {
     let mut url = Url::parse(API_URL).unwrap();
-    url.set_path("check-http");
+    url.set_path(&format!("check-{}", check_type));
     url.query_pairs_mut().append_pair("host", &host[..]);
 
     if nodes > 0 {

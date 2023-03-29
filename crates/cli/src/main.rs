@@ -40,6 +40,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             result = builder::check_http(hostname, args.nodes)?;
         }
 
+        "ping" => {
+            result = builder::check_ping(hostname, args.nodes)?;
+        }
+
         _ => {}
     }
 
