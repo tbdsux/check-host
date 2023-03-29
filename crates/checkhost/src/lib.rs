@@ -74,3 +74,26 @@ pub fn check_tcp(
 
     Ok(check_result)
 }
+
+#[derive(Debug, Deserialize)]
+#[serde(untagged)]
+pub enum UdpCheckResponse {
+    Ok { address: String, timeout: u8 },
+    Err { error: String },
+}
+
+pub fn check_udp(
+    host: &str,
+    nodes: u8,
+    wait: u8,
+) -> Result<HashMap<String, Option<Vec<UdpCheckResponse>>>, reqwest::Error> {
+    let url = utils::check_url_builder(host, nodes, "udp");
+    let init_check = utils::api_request::<CheckRequestResponse>(url.as_str())?;
+
+    sleep(wait);
+
+    let result_url = utils::result_url_builder(&init_check.request_id);
+    let check_result = utils::api_request(result_url.as_str())?;
+
+    Ok(check_result)
+}

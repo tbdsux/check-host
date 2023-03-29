@@ -3,6 +3,49 @@ use tabled::builder::Builder;
 
 use checkhost;
 
+pub fn check_udp(host: &str, nodes: u8, wait: u8) -> Result<Builder, Box<dyn Error>> {
+    let check_result = checkhost::check_udp(host, nodes, wait)?;
+
+    let mut builder = Builder::default();
+    let table_headers = vec!["Location", "Result", "IP Address"];
+    builder.set_columns(table_headers);
+
+    for (key, value) in check_result {
+        match value {
+            Some(value) => {
+                let mut it = vec![key];
+
+                let res = &value[0];
+
+                match res {
+                    checkhost::UdpCheckResponse::Ok {
+                        address,
+                        timeout: _,
+                    } => {
+                        // Info: Successful connect to host.
+
+                        it.push("Open or filtered".to_string());
+                        it.push(address.to_string());
+                    }
+                    checkhost::UdpCheckResponse::Err { error } => {
+                        // Info: Connection timed out.
+
+                        it.push(error.to_string());
+                        it.push("".to_string());
+                    }
+                }
+
+                builder.add_record(it);
+            }
+            None => {
+                builder.add_record(vec![key, "".to_string(), "".to_string()]);
+            }
+        }
+    }
+
+    Ok(builder)
+}
+
 pub fn check_tcp(host: &str, nodes: u8, wait: u8) -> Result<Builder, Box<dyn Error>> {
     let check_result = checkhost::check_tcp(host, nodes, wait)?;
 
