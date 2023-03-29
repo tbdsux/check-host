@@ -3,8 +3,50 @@ use tabled::builder::Builder;
 
 use checkhost;
 
-pub fn check_ping(host: &str, nodes: u8) -> Result<Builder, Box<dyn Error>> {
-    let check_result = checkhost::check_ping(host, nodes)?;
+pub fn check_tcp(host: &str, nodes: u8, wait: u8) -> Result<Builder, Box<dyn Error>> {
+    let check_result = checkhost::check_tcp(host, nodes, wait)?;
+
+    let mut builder = Builder::default();
+    let table_headers = vec!["Location", "Result", "Time", "IP Address"];
+    builder.set_columns(table_headers);
+
+    for (key, value) in check_result {
+        match value {
+            Some(value) => {
+                let mut it = vec![key];
+
+                let res = &value[0];
+
+                match res {
+                    checkhost::TcpCheckResponse::Ok { address, time } => {
+                        // Info: Successful connect to host.
+
+                        it.push("Connected".to_string());
+                        it.push(format!("{} s", (time * 1000.0).round() / 1000.0));
+                        it.push(address.to_string());
+                    }
+                    checkhost::TcpCheckResponse::Err { error } => {
+                        // Info: Connection timed out.
+
+                        it.push(error.to_string());
+                        it.push("".to_string());
+                        it.push("".to_string());
+                    }
+                }
+
+                builder.add_record(it);
+            }
+            None => {
+                builder.add_record(vec![key, "".to_string(), "".to_string(), "".to_string()]);
+            }
+        }
+    }
+
+    Ok(builder)
+}
+
+pub fn check_ping(host: &str, nodes: u8, wait: u8) -> Result<Builder, Box<dyn Error>> {
+    let check_result = checkhost::check_ping(host, nodes, wait)?;
 
     let mut builder = Builder::default();
 
@@ -87,8 +129,8 @@ pub fn check_ping(host: &str, nodes: u8) -> Result<Builder, Box<dyn Error>> {
     Ok(builder)
 }
 
-pub fn check_http(host: &str, nodes: u8) -> Result<Builder, Box<dyn Error>> {
-    let check_result = checkhost::check_http(host, nodes)?;
+pub fn check_http(host: &str, nodes: u8, wait: u8) -> Result<Builder, Box<dyn Error>> {
+    let check_result = checkhost::check_http(host, nodes, wait)?;
 
     let mut builder = Builder::default();
 

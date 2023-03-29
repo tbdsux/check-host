@@ -17,6 +17,10 @@ struct Args {
     /// Maximum number of nodes used for the check. 0 = max
     #[arg(short, long, default_value_t = 0)]
     nodes: u8,
+
+    /// Wait for seconds before checking the result.
+    #[arg(short, long, default_value_t = 0)]
+    wait: u8,
 }
 
 const DEF_TYPES: [&str; 5] = ["ping", "http", "tcp", "dns", "udp"];
@@ -37,11 +41,15 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     match check_type {
         "http" => {
-            result = builder::check_http(hostname, args.nodes)?;
+            result = builder::check_http(hostname, args.nodes, args.wait)?;
         }
 
         "ping" => {
-            result = builder::check_ping(hostname, args.nodes)?;
+            result = builder::check_ping(hostname, args.nodes, args.wait)?;
+        }
+
+        "tcp" => {
+            result = builder::check_tcp(hostname, args.nodes, args.wait)?;
         }
 
         _ => {}
