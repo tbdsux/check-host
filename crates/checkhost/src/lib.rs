@@ -97,3 +97,28 @@ pub fn check_udp(
 
     Ok(check_result)
 }
+
+#[allow(dead_code)]
+#[derive(Debug, Deserialize)]
+#[serde(rename_all = "UPPERCASE")]
+pub struct DnsResponse {
+    pub a: Vec<String>,
+    pub aaaa: Vec<String>,
+    pub ttl: Option<u64>,
+}
+
+pub fn check_dns(
+    host: &str,
+    nodes: u8,
+    wait: u8,
+) -> Result<HashMap<String, Option<Vec<DnsResponse>>>, reqwest::Error> {
+    let url = utils::check_url_builder(host, nodes, "dns");
+    let init_check = utils::api_request::<CheckRequestResponse>(url.as_str())?;
+
+    sleep(wait);
+
+    let result_url = utils::result_url_builder(&init_check.request_id);
+    let check_result = utils::api_request(result_url.as_str())?;
+
+    Ok(check_result)
+}

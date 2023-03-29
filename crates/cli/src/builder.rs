@@ -3,6 +3,40 @@ use tabled::builder::Builder;
 
 use checkhost;
 
+pub fn check_dns(host: &str, nodes: u8, wait: u8) -> Result<Builder, Box<dyn Error>> {
+    let check_result = checkhost::check_dns(host, nodes, wait)?;
+
+    let mut builder = Builder::default();
+    let table_headers = vec!["Location", "Result", "TTL"];
+    builder.set_columns(table_headers);
+
+    for (key, value) in check_result {
+        match value {
+            Some(value) => {
+                let res = &value[0];
+
+                if res.ttl.is_none() {
+                    // Info: Unable to resolve the domain name.
+                    builder.add_record(vec![key, "Not found".to_string()]);
+                    continue;
+                }
+
+                let results = format!("{}, {}", res.a.join(", "), res.aaaa.join(", "));
+                let minutes = res.ttl.unwrap() / 60;
+                let remaining_seconds = res.ttl.unwrap() % 60;
+                let ttl = format!("{}m {}s", minutes, remaining_seconds);
+
+                builder.add_record(vec![key, results, ttl]);
+            }
+            None => {
+                builder.add_record(vec![key, "".to_string(), "".to_string()]);
+            }
+        }
+    }
+
+    Ok(builder)
+}
+
 pub fn check_udp(host: &str, nodes: u8, wait: u8) -> Result<Builder, Box<dyn Error>> {
     let check_result = checkhost::check_udp(host, nodes, wait)?;
 

@@ -56,6 +56,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             result = builder::check_udp(hostname, args.nodes, args.wait)?;
         }
 
+        "dns" => {
+            result = builder::check_dns(hostname, args.nodes, args.wait)?;
+        }
+
         _ => {}
     }
 
