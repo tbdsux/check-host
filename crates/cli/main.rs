@@ -4,6 +4,16 @@ use tabled::{builder::Builder, Style};
 
 mod builder;
 
+const LOGO: &str = "
+
+  █████╗ ██╗  ██╗███████╗ █████╗ ██╗  ██╗██╗  ██╗ █████╗  ██████╗████████╗
+ ██╔══██╗██║  ██║██╔════╝██╔══██╗██║ ██╔╝██║  ██║██╔══██╗██╔════╝╚══██╔══╝
+ ██║  ╚═╝███████║█████╗  ██║  ╚═╝█████═╝ ███████║██║  ██║╚█████╗    ██║
+ ██║  ██╗██╔══██║██╔══╝  ██║  ██╗██╔═██╗ ██╔══██║██║  ██║ ╚═══██╗   ██║
+ ╚█████╔╝██║  ██║███████╗╚█████╔╝██║ ╚██╗██║  ██║╚█████╔╝██████╔╝   ██║   
+  ╚════╝ ╚═╝  ╚═╝╚══════╝ ╚════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚════╝ ╚═════╝    ╚═╝   
+";
+
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
 struct Args {
@@ -29,7 +39,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
 
     if !DEF_TYPES.contains(&args._type.as_str()) {
-        eprintln!("Unknown CHECKTYP, use `--help` to view allowed params");
+        eprintln!("Unknown CHECKTYPE, use `--help` to view allowed params");
         process::exit(1);
     }
 
@@ -66,10 +76,11 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut table = result.build();
     table.with(Style::modern());
 
-    println!("Check-{}", check_type);
-    println!("Hostname: {}", hostname);
+    println!("{}", LOGO);
     println!(
-        "Max Nodes: {}",
+        " Check: {}     |     Hostname: {}     |     Max Nodes: {}",
+        check_type.to_uppercase(),
+        hostname,
         if args.nodes == 0 { "max" } else { nodes_str }
     );
     println!("{}", table);
